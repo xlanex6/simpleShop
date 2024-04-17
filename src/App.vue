@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Footer from './components/Footer.vue'
 import Header from './components/Header.vue'
 import ProductCard from './components/Product/Card.vue'
+import Sidebar from './components/Sidebar.vue'
 
 const loading = ref(true)
 const products = ref([])
@@ -11,9 +12,10 @@ const errorMessage = ref('')
 
 const cart = ref([])
 const favorite = ref({})
+const filter = ref('')
 
 async function fetchProducts() {
-  
+
   try {
     const productsRawData = await fetch('https://fakestoreapi.com/products')
     const productsJson = await productsRawData.json()
@@ -40,6 +42,19 @@ function pushToFavorite(product) {
   favorite.value = product
 }
 
+function assignFilter(category) {
+  filter.value = category
+}
+
+
+const productsByCategory = computed(() => {
+  if (filter.value === '') {
+    return products.value
+  } else {
+    return products.value.filter((product) => product.category === filter.value)
+  }
+}) 
+
 </script>
 
 <template>
@@ -60,16 +75,15 @@ function pushToFavorite(product) {
         <div v-if="loading">LOADING....</div>
         <div v-else>
 
+          <div class="grid grid-cols-4 gap-4">
 
 
-          <!-- <pre v-if="products.length > 0">{{ products[0] }}</pre> -->
+            <Sidebar @filterCategory="assignFilter" />
 
-
-          <div class="grid grid-cols-3 gap-4">
-
-
-            <ProductCard v-for="item in products" :key="item.id" :product="item" @addToCart="pushToCart" :favoriteId="favorite.id"
-              @addToFavorite="pushToFavorite" />
+            <div class="col-span-3 grid grid-cols-3 gap-2">
+              <ProductCard v-for="item in productsByCategory" :key="item.id" :product="item" @addToCart="pushToCart"
+                :favoriteId="favorite.id" @addToFavorite="pushToFavorite" />
+            </div>
 
           </div>
 
@@ -84,6 +98,4 @@ function pushToFavorite(product) {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
