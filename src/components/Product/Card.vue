@@ -1,6 +1,7 @@
 <template>
   <div class="border-2 p-2 relative">
-    <button class="text-yellow-400 text-3xl absolute top-2 hover:text-yellow-500 right-4">✭</button>
+    <button class="text-3xl absolute top-2 hover:text-yellow-500 right-4" @click="emit('addToFavorite',product)" :class="favoriteId === product.id ? 'text-yellow-500' : 'text-gray-400'"
+    >✭</button>
 
     <img :src="product.image" alt="" class="max-h-[250px] m-auto min-h-[250px] object-contain">
 
@@ -24,11 +25,16 @@ defineProps({
   product: {
     type: Object,
     required:true
+  },
+  favoriteId: {
+    type: Number,
+    required: false
   }
 })
 
 const emit = defineEmits({
-  addToCart: (product) => product
+  addToCart: (product) => product,
+  addToFavorite: (product) => product
 })
 
 </script>

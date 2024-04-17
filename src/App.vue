@@ -10,6 +10,7 @@ const products = ref([])
 const errorMessage = ref('')
 
 const cart = ref([])
+const favorite = ref({})
 
 async function fetchProducts() {
   
@@ -35,15 +36,22 @@ function pushToCart(product) {
   cart.value.push(product)
 }
 
+function pushToFavorite(product) {
+  favorite.value = product
+}
+
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen ">
 
     <Navbar />
-    <main class="">
-      <Header />
-      <pre>CART : {{ cart }}</pre>
+    <Header />
+    <main class="max-w-screen-lg m-auto">
+      <div class="flex justify-between">
+        <div>CART: {{ cart }}</div>
+        <div>Favoris: {{ favorite.title }}</div>
+      </div>
       <div>
 
         <div v-if="errorMessage" class="bg-red-500 text-center m-4 rounded-md shadow-lg text-white px-2 py-1"> {{
@@ -60,7 +68,8 @@ function pushToCart(product) {
           <div class="grid grid-cols-3 gap-4">
 
 
-            <ProductCard v-for="item in products" :key="item.id" :product="item" @addToCart="pushToCart" />
+            <ProductCard v-for="item in products" :key="item.id" :product="item" @addToCart="pushToCart" :favoriteId="favorite.id"
+              @addToFavorite="pushToFavorite" />
 
           </div>
 
